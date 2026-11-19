@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { STRATEGY_ENGINE } from "@meridian/strategies";
+import { loadRunHistory } from "./lib/run-history";
+import type { RunRecord } from "./lib/run-history";
 import { SingleRunView } from "./views/SingleRunView";
 import { HistoryView } from "./views/HistoryView";
 import { ComparisonView } from "./views/ComparisonView";
@@ -17,8 +19,19 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "comparison", label: "Comparison" },
 ];
 
+function initialCompletedRuns(): readonly RunRecord[] {
+  try {
+    return loadRunHistory().records;
+  } catch {
+    // A storage access failure should leave the comparison view empty, not
+    // break the whole shell.
+    return [];
+  }
+}
+
 export default function App() {
   const [activeView, setActiveView] = useState<StrategyView>("single-run");
+  const [completedRuns] = useState(initialCompletedRuns);
 
   return (
     <div className="shell">
@@ -101,7 +114,12 @@ export default function App() {
       <main className="shell__content">
         {activeView === "single-run" && <SingleRunView />}
         {activeView === "history" && <HistoryView />}
-        {activeView === "comparison" && <ComparisonView />}
+        {activeView === "comparison" && (
+          <ComparisonView
+            runs={completedRuns}
+            onNavigateToHistory={() => setActiveView("history")}
+          />
+        )}
       </main>
     </div>
   );

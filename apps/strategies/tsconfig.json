@@ -5,7 +5,11 @@
     "jsx": "react-jsx",
     "noEmit": true,
     "paths": {
-      "@meridian/strategies": ["../../packages/strategies/src"]
+      "@meridian/strategies": ["../../packages/strategies/src"],
+      "@meridian/shared": ["../../packages/shared/src"],
+      "@meridian/stellar-sdk-helpers": [
+        "../../packages/stellar-sdk-helpers/src"
+      ]
     }
   },
   "include": ["src", "vite.config.ts"]
